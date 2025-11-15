@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Parts of a Plant — Interactive</title>
+  <style>
+    :root{
+      --bg:#f7fbf9;
+      --card:#ffffff;
+      --accent:#2e8b57;
+      --muted:#6b7280;
+      --glass: rgba(255,255,255,0.8);
+      --shadow: 0 6px 18px rgba(16,24,40,0.08);
+      --radius:12px;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg), #eef7f0 60%);
+      color:#0f172a;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:980px;
+      background:var(--card);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      padding:20px;
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap:18px;
+      align-items:start;
+    }
+
+    header{
+      grid-column:1/3;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:6px;
+    }
+    h1{
+      font-size:20px;
+      margin:0;
+      display:flex;
+      gap:10px;
+      align-items:baseline;
+    }
+    p.lead{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Diagram area */
+    .diagram{
+      background: linear-gradient(180deg, rgba(46,139,87,0.04), rgba(46,139,87,0.02));
+      border-radius:12px;
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:420px;
+    }
+
+    svg{
+      max-width:100%;
+      height:auto;
+    }
+
+    /* Info card */
+    .info {
+      background:var(--glass);
+      border-radius:12px;
+      padding:14px;
+      box-shadow:0 8px 20px rgba(14,20,40,0.04);
+      min-height:160px;
+    }
+    .info h2{
+      margin:0 0 8px 0;
+      font-size:16px;
+    }
+    .info p{margin:0 0 10px 0; color:var(--muted); font-size:14px; line-height:1.45;}
+    .list{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+    .btn{
+      display:inline-block;
+      padding:8px 12px;
+      background:transparent;
+      border:1px solid rgba(16,24,40,0.06);
+      border-radius:10px;
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    /* Labels (clickable) */
+    .label{
+      cursor:pointer;
+      transition:transform .12s ease, opacity .12s ease;
+    }
+    .label:hover{ transform:translateY(-4px); opacity:0.95; }
+
+    /* highlight animation */
+    .pulse {
+      animation: pulse 1.5s infinite;
+      transform-origin:center;
+    }
+    @keyframes pulse {
+      0% { transform:scale(1); opacity:0.95; }
+      50% { transform:scale(1.06); opacity:0.7; }
+      100% { transform:scale(1); opacity:0.95; }
+    }
+
+    footer{
+      grid-column:1/3;
+      text-align:center;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* responsive */
+    @media (max-width:880px){
+      .wrap{ grid-template-columns: 1fr; padding:12px; }
+      .info{ order:2; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" aria-labelledby="title">
+    <header>
+      <div>
+        <h1 id="title">Parts of a Plant <small style="font-size:12px;color:var(--muted);">(Interactive)</small></h1>
+        <p class="lead">Click any labeled part on the diagram to read a short definition and function.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn" id="resetBtn" title="Reset highlights">Reset</button>
+        <button class="btn" id="printBtn" title="Print this page">Print</button>
+      </div>
+    </header>
+
+    <!-- Diagram -->
+    <section class="diagram" aria-label="Plant diagram">
+      <!-- Simple stylized plant SVG with labeled clickable hotspots -->
+      <svg viewBox="0 0 700 600" role="img" aria-labelledby="plantDesc">
+        <title id="plantDesc">Illustration of a plant with roots, stem, leaves, flower, fruit and seed</title>
+
+        <!-- ground -->
+        <rect x="0" y="480" width="700" height="120" fill="#efe6d9"></rect>
+        <rect x="0" y="480" width="700" height="6" fill="#e3d5b7"></rect>
+
+        <!-- roots -->
+        <g id="roots" class="label" data-part="roots" transform="translate(120,360)">
+          <path d="M120 110 C 90 140, 70 170, 40 190" stroke="#8b5a2b" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <path d="M120 110 C 150 140, 170 170, 200 190" stroke="#8b5a2b" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <path d="M115 110 C 100 150, 90 180, 70 210" stroke="#6f4628" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.9"/>
+          <circle cx="120" cy="110" r="10" fill="#7a4b2a"/>
+        </g>
+
+        <!-- stem -->
+        <g id="stem" class="label" data-part="stem">
+          <path d="M260 120 C 265 140, 265 240, 260 300 C 260 330, 260 380, 260 420" stroke="#2f6f3a" stroke-width="20" stroke-linecap="round" fill="none"/>
+          <path d="M260 120 C 255 140, 255 240, 260 300 C 260 330, 260 380, 260 420" stroke="#3f7f4a" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.5"/>
+        </g>
+
+        <!-- leaves -->
+        <g id="leaves">
+          <!-- left leaf -->
+          <g class="label" data-part="leaf" transform="translate(190,220) rotate(-20)">
+            <path d="M0 0 C -70 -20, -120 -10, -170 30 C -120 60, -70 80, 0 50 Z" fill="#4caf50" stroke="#2e8b57" stroke-width="2"/>
+            <line x1="-40" y1="5" x2="-100" y2="30" stroke="#2c6b3a" stroke-width="3" stroke-linecap="round"/>
+          </g>
+
+          <!-- right leaf -->
+          <g class="label" data-part="leaf" transform="translate(320,200) rotate(20)">
+            <path d="M0 0 C 70 -20, 120 -10, 170 30 C 120 60, 70 80, 0 50 Z" fill="#5ac061" stroke="#2e8b57" stroke-width="2"/>
+            <line x1="40" y1="5" x2="100" y2="30" stroke="#2c6b3a" stroke-width="3" stroke-linecap="round"/>
+          </g>
+        </g>
+
+        <!-- flower -->
+        <g id="flower" class="label" data-part="flower" transform="translate(260,80)">
+          <!-- petals -->
+          <g>
+            <ellipse cx="-38" cy="10" rx="26" ry="36" fill="#ff8fb1" stroke="#d94f7a" stroke-width="1.8" transform="rotate(-30)"></ellipse>
+            <ellipse cx="38" cy="10" rx="26" ry="36" fill="#ffc38f" stroke="#d97a3a" stroke-width="1.8" transform="rotate(30)"></ellipse>
+            <ellipse cx="0" cy="-34" rx="26" ry="36" fill="#ffd98f" stroke="#d9a63a" stroke-width="1.8" transform="rotate(0)"></ellipse>
+            <ellipse cx="0" cy="24" rx="26" ry="36" fill="#ff9f9f" stroke="#d95a5a" stroke-width="1.8" transform="rotate(0)"></ellipse>
+          </g>
+          <!-- center -->
+          <circle cx="0" cy="0" r="18" fill="#ffd54a" stroke="#d99c2a" stroke-width="1.5"/>
+          <!-- stem join -->
+          <rect x="-6" y="18" width="12" height="20" rx="6" fill="#2f6f3a"/>
+        </g>
+
+        <!-- fruit (right upper) -->
+        <g id="fruit" class="label" data-part="fruit" transform="translate(380,140) rotate(3)">
+          <ellipse cx="0" cy="0" rx="20" ry="28" fill="#ff6b6b" stroke="#c74a4a" stroke-width="2"/>
+          <rect x="-3" y="-26" width="6" height="10" rx="2" fill="#3b5b2f"/>
+        </g>
+
+        <!-- seed (inside fruit, shown separately below as example) -->
+        <g id="seed" class="label" data-part="seed" transform="translate(510,420)">
+          <ellipse rx="28" ry="18" fill="#f7e6d4" stroke="#caa785" stroke-width="1.6"/>
+          <path d="M-8 0 C -2 8, 10 6, 16 -4" stroke="#a97a4a" stroke-width="2" fill="none" />
+        </g>
+
+        <!-- small root extension/soil -->
+        <g transform="translate(200,420)">
+          <path d="M0 0 C 20 6, 40 8, 60 6" stroke="#b8916a" stroke-width="3" fill="none"/>
+        </g>
+
+        <!-- labels (text markers) -->
+        <!-- We'll place small circles with numbers near parts, clickable via JS -->
+        <g id="markers" font-family="Arial, sans-serif" font-size="13" fill="#fff" text-anchor="middle" style="pointer-events:none">
+          <g class="marker" data-for="roots">
+            <circle cx="120" cy="240" r="14" fill="#6b4a2c" stroke="#41280f" stroke-width="2"></circle>
+            <text x="120" y="245">1</text>
+          </g>
+          <g class="marker" data-for="stem">
+            <circle cx="250" cy="230" r="14" fill="#2e8b57" stroke="#184428" stroke-width="2"></circle>
+            <text x="250" y="235">2</text>
+          </g>
+          <g class="marker" data-for="leaf">
+            <circle cx="335" cy="200" r="14" fill="#4caf50" stroke="#215d36" stroke-width="2"></circle>
+            <text x="335" y="205">3</text>
+          </g>
+          <g class="marker" data-for="flower">
+            <circle cx="260" cy="70" r="14" fill="#ff7aa2" stroke="#a83461" stroke-width="2"></circle>
+            <text x="260" y="75">4</text>
+          </g>
+          <g class="marker" data-for="fruit">
+            <circle cx="380" cy="140" r="12" fill="#ff6b6b" stroke="#a83a3a" stroke-width="2"></circle>
+            <text x="380" y="144">5</text>
+          </g>
+          <g class="marker" data-for="seed">
+            <circle cx="510" cy="420" r="12" fill="#f7e0c8" stroke="#b88f63" stroke-width="2"></circle>
+            <text x="510" y="423">6</text>
+          </g>
+        </g>
+
+      </svg>
+    </section>
+
+    <!-- Info panel -->
+    <aside class="info" aria-live="polite" aria-atomic="true">
+      <h2 id="partTitle">Click a part to learn</h2>
+      <p id="partDesc">This interactive diagram shows the main parts of a plant: roots, stem, leaves, flower, fruit, and seed. Click any number on the diagram to see a short description and function.</p>
+
+      <div class="list" aria-hidden="false">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" data-quick="roots">Roots</button>
+          <button class="btn" data-quick="stem">Stem</button>
+          <button class="btn" data-quick="leaf">Leaf</button>
+          <button class="btn" data-quick="flower">Flower</button>
+          <button class="btn" data-quick="fruit">Fruit</button>
+          <button class="btn" data-quick="seed">Seed</button>
+        </div>
+      </div>
+    </aside>
+
+    <footer>
+      Tip: press a number on the picture (1–6) or use the buttons on the right. Designed for classroom or self-study.
+    </footer>
+  </main>
+
+  <script>
+    // Definitions
+    const PARTS = {
+      roots: {
+        title: "Roots",
+        desc: "Roots anchor the plant in the soil, absorb water and minerals, and sometimes store food (e.g., carrots, beets). They grow down into the soil."
+      },
+      stem: {
+        title: "Stem",
+        desc: "The stem supports leaves and flowers and transports water, minerals and nutrients between roots and leaves through xylem and phloem vessels."
+      },
+      leaf: {
+        title: "Leaf",
+        desc: "Leaves are the main site of photosynthesis — they capture sunlight and use it to make food (sugars) from carbon dioxide and water."
+      },
+      flower: {
+        title: "Flower",
+        desc: "Flowers are the reproductive organs of many plants. They attract pollinators and produce seeds after pollination and fertilization."
+      },
+      fruit: {
+        title: "Fruit",
+        desc: "Fruits develop from flowers and contain seeds. They protect seeds and help disperse them (by animals, wind, or water)."
+      },
+      seed: {
+        title: "Seed",
+        desc: "Seeds contain an embryo and stored food; they can grow into a new plant when conditions are right."
+      }
+    };
+
+    // Helpers to highlight parts (apply class to specific SVG groups)
+    function highlight(partKey){
+      // Remove existing pulses
+      document.querySelectorAll('.pulse').forEach(el => el.classList.remove('pulse'));
+      // Find svg group(s) with data-part attribute
+      const groups = document.querySelectorAll('[data-part="'+partKey+'"]');
+      if(groups.length){
+        groups.forEach(g => g.classList.add('pulse'));
+      } else {
+        // fallback: highlight marker
+        const marker = document.querySelector('.marker[data-for="'+partKey+'"]');
+        if(marker) marker.querySelector('circle').classList.add('pulse');
+      }
+    }
+
+    function showPart(partKey){
+      const info = PARTS[partKey];
+      if(!info) return;
+      document.getElementById('partTitle').textContent = info.title;
+      document.getElementById('partDesc').textContent = info.desc;
+      highlight(partKey);
+    }
+
+    // Wire up click on markers (numbers)
+    document.querySelectorAll('#markers .marker').forEach(m => {
+      const part = m.getAttribute('data-for');
+      // make clickable by adding pointer events through parent container
+      const parentSvg = m.ownerSVGElement;
+      // set cursor via style
+      m.style.cursor = 'pointer';
+      m.addEventListener('click', () => showPart(part));
+    });
+
+    // Wire up labels (some groups have data-part)
+    document.querySelectorAll('svg .label').forEach(g => {
+      const part = g.getAttribute('data-part');
+      g.style.cursor = 'pointer';
+      g.addEventListener('click', () => showPart(part));
+      // allow keyboard accessibility: make focusable by adding tabindex via foreignObject workaround
+      // Simpler: allow global keypress to choose numbers; below we provide numeric keys handler.
+    });
+
+    // Quick buttons
+    document.querySelectorAll('.btn[data-quick]').forEach(b => {
+      b.addEventListener('click', () => {
+        showPart(b.getAttribute('data-quick'));
+      });
+    });
+
+    // Reset & Print
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.getElementById('partTitle').textContent = 'Click a part to learn';
+      document.getElementById('partDesc').textContent = 'This interactive diagram shows the main parts of a plant: roots, stem, leaves, flower, fruit, and seed. Click any number on the diagram to see a short description and function.';
+      document.querySelectorAll('.pulse').forEach(el => el.classList.remove('pulse'));
+    });
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    // keyboard shortcuts: 1..6
+    window.addEventListener('keydown', (e) => {
+      if(document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+      const key = e.key;
+      const map = { '1':'roots','2':'stem','3':'leaf','4':'flower','5':'fruit','6':'seed' };
+      if(map[key]) {
+        showPart(map[key]);
+      }
+    });
+
+    // make markers clickable in the document-level SVG (since pointer-events:none used earlier for text)
+    // attach click on whole svg and detect nearest marker via mouse coordinates (improves mobile)
+    const svg = document.querySelector('svg');
+    svg.addEventListener('click', (ev) => {
+      const pt = svg.createSVGPoint();
+      pt.x = ev.clientX; pt.y = ev.clientY;
+      const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+      // iterate markers to find one with bounding box containing click
+      const markers = svg.querySelectorAll('#markers .marker');
+      for(const m of markers){
+        const bbox = m.getBBox();
+        if(svgP.x >= bbox.x && svgP.x <= bbox.x + bbox.width && svgP.y >= bbox.y && svgP.y <= bbox.y + bbox.height){
+          const part = m.getAttribute('data-for');
+          showPart(part);
+          break;
+        }
+      }
+    });
+
+    // Accessibility: announce initial instructions
+    window.addEventListener('load', () => {
+      const live = document.querySelector('.info');
+      live.setAttribute('role','region');
+      live.setAttribute('aria-label','Plant part information panel');
+    });
+  </script>
+</body>
+</html>
