@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Minecraft — Guide & Interactive Crafting Helper</title>
+<style>
+  :root{
+    --bg:#0b1220;
+    --card:#0f1724;
+    --accent:#6fbf5b;
+    --muted:#9aa6b2;
+    --glass: rgba(255,255,255,0.03);
+    --tile:#1b2a1f;
+    --mono: "Segoe UI Mono", "Courier New", monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(180deg,#071018 0%, #0b1220 60%);
+    color:#e6f0ea;
+    padding:20px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .container{
+    max-width:1100px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:18px;
+    align-items:start;
+  }
+  header{
+    grid-column:1/3;
+    display:flex;
+    gap:16px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:6px;
+  }
+  h1{font-size:22px;margin:0;display:flex;gap:10px;align-items:center}
+  .subtitle{color:var(--muted); font-size:13px}
+  .card{
+    background:linear-gradient(180deg,var(--card), #0b1720);
+    border-radius:12px;
+    padding:14px;
+    box-shadow: 0 8px 30px rgba(2,6,10,0.6);
+  }
+
+  /* left content */
+  .content .section{margin-bottom:12px}
+  .section h2{margin:0 0 8px 0;color:var(--accent);font-size:16px}
+  p{margin:0 0 10px 0;color:#dbe9d9;line-height:1.5}
+
+  /* right sidebar */
+  aside{position:relative}
+  .crafting {
+    display:grid;
+    gap:10px;
+  }
+  .craft-grid{
+    display:grid;
+    grid-template-columns: repeat(3,56px);
+    gap:6px;
+    padding:10px;
+    background:linear-gradient(180deg, #0b2316, #142a1b);
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  .slot{
+    width:56px;height:56px;border-radius:6px;background:var(--tile);display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono); color:#dbe9d9;font-size:12px;border:1px solid rgba(0,0,0,0.5);
+    cursor:pointer;
+  }
+  .slot.small{width:44px;height:44px;font-size:11px}
+  .recipe-output{display:flex;gap:10px;align-items:center}
+  .output-slot{width:72px;height:72px;border-radius:8px;background:linear-gradient(180deg,#2b492f,#213826);display:flex;align-items:center;justify-content:center;font-weight:700}
+
+  .items-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+  .item-btn{padding:8px;border-radius:8px;background:linear-gradient(180deg,#132616,#0f1f15);border:1px solid rgba(255,255,255,0.02);cursor:pointer;text-align:left;font-size:13px}
+
+  .controls{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .tip{background:linear-gradient(90deg,#16382a,#0e2214);padding:10px;border-radius:8px;color:var(--muted);font-size:13px}
+
+  /* mobs */
+  .mob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .mob{
+    background:linear-gradient(180deg,#12281b,#0f1b14);padding:10px;border-radius:8px;text-align:center;font-size:13px
+  }
+
+  footer{grid-column:1/3;text-align:center;color:var(--muted);font-size:13px;margin-top:10px}
+
+  /* responsive */
+  @media (max-width:980px){
+    .container{grid-template-columns:1fr; padding-bottom:40px}
+    aside{order:2}
+  }
+
+  /* small helper */
+  .kbd{display:inline-block;background:#091411;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);font-family:var(--mono);font-size:12px}
+  a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>🌍 Minecraft — Quick Guide & Crafting Helper</h1>
+        <div class="subtitle">Basics, controls, mobs, and a tiny interactive crafting helper — single-file HTML</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="reset" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--muted)">Reset</button>
+      </div>
+    </header>
+
+    <!-- left: content -->
+    <main class="card content" role="main">
+      <section class="section" id="overview">
+        <h2>What is Minecraft?</h2>
+        <p>Minecraft is a sandbox game about placing and breaking blocks. Players explore, gather resources, craft tools, build structures, and survive threats. It has creative and survival modes, multiplayer servers, and a massive modding community.</p>
+      </section>
+
+      <section class="section" id="modes">
+        <h2>Game Modes</h2>
+        <p><strong>Survival:</strong> gather food, manage health and hunger, craft tools, and fight mobs. <strong>Creative:</strong> infinite resources and flying for building. <strong>Adventure:</strong> play custom maps (restrictions on block breaking).</p>
+      </section>
+
+      <section class="section" id="controls">
+        <h2>Common Controls (PC)</h2>
+        <p><span class="kbd">W A S D</span> move — <span class="kbd">Space</span> jump — <span class="kbd">Shift</span> sneak — <span class="kbd">E</span> inventory — <span class="kbd">1–9</span> hotbar. Mouse left-click to break/place; right-click to use/place items.</p>
+        <div class="tip">Tip: Sprint by double-tapping <span class="kbd">W</span> or holding <span class="kbd">Ctrl</span> (configurable).</div>
+      </section>
+
+      <section class="section" id="mobs">
+        <h2>Common Mobs</h2>
+        <div class="mob-grid" aria-hidden="false">
+          <div class="mob"><strong>Creeper</strong><br>Explodes near player — avoid or use a bow.</div>
+          <div class="mob"><strong>Zomb ie</strong><br>Hostile at night, burns in daylight.</div>
+          <div class="mob"><strong>Skeleton</strong><br>Ranged attacker with bow.</div>
+          <div class="mob"><strong>Enderman</strong><br>Tall neutral mob — don't stare.</div>
+          <div class="mob"><strong>Villager</strong><br>Trades items; breed them with food.</div>
+          <div class="mob"><strong>Spider</strong><br>Climbs walls; hostile at night.</div>
+        </div>
+      </section>
+
+      <section class="section" id="tips">
+        <h2>Beginner Tips</h2>
+        <ul style="margin:8px 0 0 18px;color:#dbe9d9">
+          <li>First night: gather wood, craft a crafting table and wooden tools, build a simple shelter.</li>
+          <li>Always carry a stack of torches when mining to stop mobs spawning.</li>
+          <li>Make a bed to skip night and reset your spawn point (requires wool + wood).</li>
+          <li>Use a hoe + seeds to start a small farm for food security.</li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- right: interactive crafting helper -->
+    <aside class="card" aria-labelledby="craftTitle">
+      <h2 id="craftTitle" style="margin-top:0;color:var(--accent)">Crafting Helper</h2>
+      <p style="margin-top:4px;color:var(--muted);font-size:13px">Click any item below to show a common recipe. The 3×3 grid visually represents a crafting table; output shows the result.</p>
+
+      <div class="crafting">
+        <div style="display:flex;gap:10px;align-items:center;justify-content:space-between">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="font-size:13px;color:var(--muted)">Crafting Table Grid</div>
+          </div>
+          <div class="recipe-output">
+            <div style="font-size:13px;color:var(--muted)">Result</div>
+            <div class="output-slot" id="outputSlot">—</div>
+          </div>
+        </div>
+
+        <div class="craft-grid" id="craftGrid" role="grid" aria-label="crafting grid">
+          <!-- 9 slots (1..9) -->
+          <div class="slot" data-pos="1"></div>
+          <div class="slot" data-pos="2"></div>
+          <div class="slot" data-pos="3"></div>
+          <div class="slot" data-pos="4"></div>
+          <div class="slot" data-pos="5"></div>
+          <div class="slot" data-pos="6"></div>
+          <div class="slot" data-pos="7"></div>
+          <div class="slot" data-pos="8"></div>
+          <div class="slot" data-pos="9"></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+          <div style="font-size:13px;color:var(--muted)">Quick items — click to place pattern</div>
+          <div style="font-size:13px;color:var(--muted)">Click empty output to clear</div>
+        </div>
+
+        <div class="items-list" id="itemsList" aria-hidden="false">
+          <!-- Each button inserts a recipe pattern into the grid -->
+          <button class="item-btn" data-recipe="planks">Wooden Planks — (1 wood -> 4 planks)</button>
+          <button class="item-btn" data-recipe="stick">Sticks — (2 planks vertical -> 4 sticks)</button>
+          <button class="item-btn" data-recipe="crafting_table">Crafting Table — (4 planks)</button>
+          <button class="item-btn" data-recipe="wooden_pick">Wooden Pickaxe — (planks + sticks)</button>
+          <button class="item-btn" data-recipe="furnace">Furnace — (8 cobblestone)</button>
+          <button class="item-btn" data-recipe="torch">Torches — (stick + coal -> 4 torches)</button>
+        </div>
+
+        <div class="controls">
+          <div style="display:flex;gap:8px">
+            <button id="craftBtn" class="item-btn" style="flex:1">Craft (simulate)</button>
+            <button id="clearBtn" class="item-btn" style="flex:1">Clear Grid</button>
+          </div>
+          <div class="tip">Note: This is a simple simulator showing common recipes for survival mode (vanilla). It doesn't support all variants.</div>
+        </div>
+      </div>
+    </aside>
+
+    <footer class="subtitle">Created for learning — save this single file to your repo and open it in a browser. Want a themed Minecraft page (nether, end, redstone) or printable worksheet? Ask and I’ll expand it.</footer>
+  </div>
+
+<script>
+  // Simple crafting helper implementation (pattern-based)
+  const GRID = Array.from(document.querySelectorAll('.slot'));
+  const output = document.getElementById('outputSlot');
+  const recipes = {
+    // Each recipe described by positions (1..9) with item token
+    planks: {name:'Oak Planks (x4)', pattern:{5:'log'}, convert:{'log':'planks'}}, // single center -> 4 planks
+    stick: {name:'Sticks (x4)', pattern:{2:'plank',5:'plank'}, result:'stick'},
+    crafting_table: {name:'Crafting Table', pattern:{1:'plank',2:'plank',4:'plank',5:'plank'}, result:'crafting_table'},
+    wooden_pick: {name:'Wooden Pickaxe', pattern:{1:'plank',2:'plank',3:'plank',5:'stick',8:'stick'}, result:'wooden_pick'},
+    furnace: {name:'Furnace', pattern:{1:'cobble',2:'cobble',3:'cobble',4:'cobble',6:'cobble',7:'cobble',8:'cobble',9:'cobble'}, result:'furnace'},
+    torch: {name:'Torches (x4)', pattern:{5:'stick',2:'coal'}, result:'torch'}
+  };
+
+  // Simple tokens that map to display labels (no images)
+  const tokens = {
+    log: 'Log',
+    plank: 'Plank',
+    planks: 'Planks',
+    stick: 'Stick',
+    crafting_table: 'Crafting Table',
+    wooden_pick: 'Wooden Pickaxe',
+    cobble: 'Cobblestone',
+    furnace: 'Furnace',
+    coal: 'Coal',
+    torch: 'Torch'
+  };
+
+  // utility: write pattern to grid (overwrites)
+  function applyPattern(pattern, tokenOverride){
+    GRID.forEach(s => s.textContent = '');
+    for(const pos in pattern){
+      const idx = parseInt(pos)-1;
+      if(GRID[idx]) GRID[idx].textContent = tokens[ pattern[pos] ] || pattern[pos];
+    }
+    if(tokenOverride){
+      // apply override mapping (used for planks example)
+      // not strictly needed here
+    }
+    output.textContent = '—';
+  }
+
+  // wire item buttons
+  document.querySelectorAll('.item-btn[data-recipe]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-recipe');
+      const r = recipes[key];
+      if(!r) return;
+      applyPattern(r.pattern);
+      // show expected output name
+      output.textContent = r.name || (r.result ? tokens[r.result] : '?');
+    });
+  });
+
+  // craft button: check if current grid matches a recipe exactly
+  function craftFromGrid(){
+    // build current grid token map by mapping displayed labels back to tokens
+    const gridMap = {};
+    GRID.forEach((s, i) => {
+      const txt = s.textContent.trim();
+      if(!txt) return;
+      // reverse lookup token from tokens map (simple)
+      const token = Object.keys(tokens).find(k => tokens[k] === txt) || txt.toLowerCase();
+      gridMap[i+1] = token;
+    });
+
+    // compare against recipes
+    for(const key in recipes){
+      const recipe = recipes[key];
+      const pat = recipe.pattern;
+      // check every cell in pat matches
+      let ok = true;
+      for(const pos in pat){
+        if(!(gridMap[pos] && (gridMap[pos] === pat[pos] || gridMap[pos] === (pat[pos] + 's')))){
+          ok = false; break;
+        }
+      }
+      // ensure no extra filled slots (strict match)
+      const filledPositions = Object.keys(gridMap);
+      const patPositions = Object.keys(pat);
+      if(ok && filledPositions.length === patPositions.length){
+        output.textContent = recipe.name || tokens[recipe.result] || (recipe.result || key);
+        return;
+      }
+    }
+    output.textContent = 'No valid recipe';
+  }
+
+  document.getElementById('craftBtn').addEventListener('click', craftFromGrid);
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    GRID.forEach(s => s.textContent = '');
+    output.textContent = '—';
+  });
+
+  // Click individual slot to cycle through a small list of tokens (quick-edit)
+  const cycleList = ['log','plank','planks','stick','coal','cobble',''];
+  GRID.forEach(slot => {
+    slot.addEventListener('click', () => {
+      const cur = slot.textContent.trim();
+      const curToken = Object.keys(tokens).find(k => tokens[k] === cur);
+      let idx = 0;
+      if(curToken) idx = cycleList.indexOf(curToken) >= 0 ? cycleList.indexOf(curToken) + 1 : 0;
+      if(idx >= cycleList.length) idx = 0;
+      const next = cycleList[idx];
+      slot.textContent = next ? (tokens[next] || next) : '';
+    });
+  });
+
+  // Reset button (page-level)
+  document.getElementById('reset').addEventListener('click', () => {
+    GRID.forEach(s => s.textContent = '');
+    output.textContent = '—';
+  });
+
+  // Helpful keyboard shortcuts
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'c'){ // craft
+      craftFromGrid();
+    } else if(e.key === 'Escape'){
+      GRID.forEach(s => s.textContent = '');
+      output.textContent = '—';
+    }
+  });
+
+  // initial sample: show crafting table recipe when loaded
+  applyPattern(recipes.crafting_table.pattern);
+  output.textContent = recipes.crafting_table.name;
+</script>
+</body>
+</html>
